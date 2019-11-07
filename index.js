@@ -1,16 +1,29 @@
 const Discord = require('discord.js');
 const {
 	prefix,
+
 	token,
 } = require('./config.json');
+	console.log(prefix);
+var cDAY = false;
+var DAY; 
+var y = 0;
 const ytdl = require('ytdl-core');
+
+const fs = require('fs');
 
 const client = new Discord.Client();
 
 const queue = new Map();
 
 const fetch = require('node-fetch');
+ var Users_list = [];
+ const helpmsg = require("./help.js");
+const music = require("./musicbot.js")
+const folder = './Playlists';
 
+
+  
 
 client.once('ready', () => {
 	console.log('Ready!');
@@ -24,32 +37,30 @@ client.once('disconnect', () => {
 	console.log('Disconnect!');
 });
 
-
-
 client.on('message', async message => {
+	
+	
 	if (message.author.bot) return;
 	if (!message.content.startsWith(prefix)) return;
 
 	const serverQueue = queue.get(message.guild.id);
 
 	if (message.content.startsWith(`${prefix}play`)) {
-		execute(message, serverQueue);
+		music.execute(message, serverQueue);
 		return;
 	} 
 	else if (message.content.startsWith(`${prefix}skip`)) {
-		skip(message, serverQueue);
+		music.skip(message, serverQueue);
+		
 		return;
 	} 
+	
 	else if (message.content.startsWith(`${prefix}stop`)) {
-		stop(message, serverQueue);
+		music.stop(message, serverQueue);
 		return;
 	} 
 	else if (message.content.startsWith(`${prefix}ping`)){
 		message.channel.send('Pong.');
-	}
-	else if (message.content.startsWith(`${prefix}hello`)) {
-		 
-        message.channel.send(`<@" + reminder.user_id +">`)
 	}
 	else if (message.content.startsWith(`${prefix}cat`)){
 		const { file } = await fetch('https://aws.random.cat/meow').then(response => response.json());
@@ -58,98 +69,61 @@ client.on('message', async message => {
 	
 	else if (message.content.startsWith(`${prefix}eidolon`)){
 		
-		const { isDay } = await fetch('https://api.warframestat.us/pc/cetusCycle').then(response => response.json());
+	}
+	else if(message.content.startsWith(`${prefix}create_list`)){
+		music.listc(message,serverQueue);
+		
+	}
+	else if(message.content.startsWith(`${prefix}listadd`)){
+		music.listadd(message,serverQueue);
+		return;
+	}
+	else if(message.content.startsWith(`${prefix}startlist`)){
+		music.list(message,serverQueue);
+		
+	}
+	else if(message.content.startsWith(`${prefix}help`)){
+		helpmsg.help(message);
+		
+	}
+	else if (message.content.startsWith(`${prefix}setprefix`)) {
+		setprefix(message);
+		console.log(prefix);
+		return;
+	} 
+	
+	else {
+		message.channel.send('You need to enter a valid command!');
+	}
+})
+
+function setprefix(message){
+	
+	const args = message.content.slice(setprefix).split(' ')
+	 pref = args[1];
+	
+	
+	var data = fs.readFileSync('config.json', 'utf-8');
+  var newValue = data.replace(prefix, pref);
+
+  fs.writeFileSync('config.json', newValue, 'utf-8');
+
+  console.log('readFileSync complete');
+}
+
+async function daystate(message){
+const { isDay } = await fetch('https://api.warframestat.us/pc/cetusCycle').then(response => response.json());
 		
 		if(isDay == true ){
 		const { timeLeft } = await fetch('https://api.warframestat.us/pc/cetusCycle').then(response => response.json());
-		message.channel.send(`time until night `+timeLeft);	}
-		else {message.channel.send(`is night bro`);}
-	}
-	else {
-		message.channel.send('You need to enter a valid command!')
-	}
-});
-
-async function execute(message, serverQueue) {
-	const args = message.content.split(' ');
-
-	const voiceChannel = message.member.voiceChannel;
-	if (!voiceChannel) return message.channel.send('You need to be in a voice channel to play music!');
-	const permissions = voiceChannel.permissionsFor(message.client.user);
-	if (!permissions.has('CONNECT') || !permissions.has('SPEAK')) {
-		return message.channel.send('I need the permissions to join and speak in your voice channel!');
-	}
-
-	const songInfo = await ytdl.getInfo(args[1]);
-	const song = {
-		title: songInfo.title,
-		url: songInfo.video_url,
-	};
-
-	if (!serverQueue) {
-		const queueContruct = {
-			textChannel: message.channel,
-			voiceChannel: voiceChannel,
-			connection: null,
-			songs: [],
-			volume: 5,
-			playing: true,
-		};
-
-		queue.set(message.guild.id, queueContruct);
-
-		queueContruct.songs.push(song);
-
-		try {
-			var connection = await voiceChannel.join();
-			queueContruct.connection = connection;
-			play(message.guild, queueContruct.songs[0]);
-		} catch (err) {
-			console.log(err);
-			queue.delete(message.guild.id);
-			return message.channel.send(err);
+		message.channel.send(`time until night `+timeLeft);	
 		}
-	} else {
-		serverQueue.songs.push(song);
-		console.log(serverQueue.songs);
-		return message.channel.send(`${song.title} has been added to the queue!`);
-	}
-
+		else 
+		{
+		message.channel.send(`is night bro`);
+		}
+	}	
 }
-
-function skip(message, serverQueue) {
-	if (!message.member.voiceChannel) return message.channel.send('You have to be in a voice channel to stop the music!');
-	if (!serverQueue) return message.channel.send('There is no song that I could skip!');
-	serverQueue.connection.dispatcher.end();
-}
-
-function stop(message, serverQueue) {
-	if (!message.member.voiceChannel) return message.channel.send('You have to be in a voice channel to stop the music!');
-	serverQueue.songs = [];
-	serverQueue.connection.dispatcher.end();
-}
-
-function play(guild, song) {
-	const serverQueue = queue.get(guild.id);
-
-	if (!song) {
-		serverQueue.voiceChannel.leave();
-		queue.delete(guild.id);
-		return;
-	}
-
-	const dispatcher = serverQueue.connection.playStream(ytdl(song.url))
-		.on('end', () => {
-			console.log('Music ended!');
-			serverQueue.songs.shift();
-			play(guild, serverQueue.songs[0]);
-		})
-		.on('error', error => {
-			console.error(error);
-		});
-	dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
-}
-
 
 
 
