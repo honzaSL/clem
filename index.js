@@ -5,8 +5,7 @@ const {
 	token,
 } = require('./config.json');
 	console.log(prefix);
-var cDAY = false;
-var DAY; 
+
 var y = 0;
 const ytdl = require('ytdl-core');
 
