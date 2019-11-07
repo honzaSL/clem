@@ -68,7 +68,7 @@ client.on('message', async message => {
 	}
 	
 	else if (message.content.startsWith(`${prefix}eidolon`)){
-		
+		daystate
 	}
 	else if(message.content.startsWith(`${prefix}create_list`)){
 		music.listc(message,serverQueue);
@@ -86,18 +86,18 @@ client.on('message', async message => {
 		helpmsg.help(message);
 		
 	}
-	else if (message.content.startsWith(`${prefix}setprefix`)) {
+	/*else if (message.content.startsWith(`${prefix}setprefix`)) {
 		setprefix(message);
 		console.log(prefix);
 		return;
-	} 
+	} */
 	
 	else {
 		message.channel.send('You need to enter a valid command!');
 	}
 })
 
-function setprefix(message){
+/*function setprefix(message){
 	
 	const args = message.content.slice(setprefix).split(' ')
 	 pref = args[1];
@@ -109,7 +109,7 @@ function setprefix(message){
   fs.writeFileSync('config.json', newValue, 'utf-8');
 
   console.log('readFileSync complete');
-}
+}*/
 
 async function daystate(message){
 const { isDay } = await fetch('https://api.warframestat.us/pc/cetusCycle').then(response => response.json());
