@@ -10,6 +10,7 @@ const queue = new Map();
 const fetch = require('node-fetch');
  var Users_list = [];
  const folder = './Playlists';
+
 /*Regular play cmds*/
 async function execute(message, serverQueue) {
 	const args = message.content.split(' ');
@@ -100,6 +101,7 @@ function play(guild, song) {
 		});
 	dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
 }
+
 
 /*play list cmds*/
 async function listc(message, serverQueue){
