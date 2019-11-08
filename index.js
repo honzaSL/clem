@@ -67,7 +67,7 @@ client.on('message', async message => {
 	}
 	
 	else if (message.content.startsWith(`${prefix}eidolon`)){
-		daystate
+		daystate(message);
 	}
 	else if(message.content.startsWith(`${prefix}create_list`)){
 		music.listc(message,serverQueue);
@@ -119,7 +119,8 @@ const { isDay } = await fetch('https://api.warframestat.us/pc/cetusCycle').then(
 		}
 		else 
 		{
-		message.channel.send(`is night bro`);
+	        const { timeLeft } = await fetch('https://api.warframestat.us/pc/cetusCycle').then(response => response.json());
+		message.channel.send(`is night` + timeLeft);
 		}
 	}	
 }
