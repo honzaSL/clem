@@ -1,28 +1,24 @@
 const Discord = require('discord.js');
 const {
 	prefix,
-
 	token,
 } = require('./config.json');
 	console.log(prefix);
-
 var y = 0;
-const ytdl = require('ytdl-core');
 
+const ytdl = require('ytdl-core');
 const fs = require('fs');
+const fetch = require('node-fetch');
 
 const client = new Discord.Client();
-
 const queue = new Map();
 
-const fetch = require('node-fetch');
- var Users_list = [];
- const helpmsg = require("./help.js");
+var Users_list = [];
+
+const helpmsg = require("./help.js");
 const music = require("./musicbot.js")
 const folder = './Playlists';
 
-
-  
 
 client.once('ready', () => {
 	console.log('Ready!');
@@ -37,7 +33,6 @@ client.once('disconnect', () => {
 });
 
 client.on('message', async message => {
-	
 	
 	if (message.author.bot) return;
 	if (!message.content.startsWith(prefix)) return;
