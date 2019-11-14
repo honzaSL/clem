@@ -36,21 +36,20 @@ const helpmsg = {
 		},
 		{
 			name: 'Startlist',
-			value: 'start your list, skip and stop have same function as before',
+			value: 'Start your list, skip and stop have same function as before',
 			
 		},
 		{
 			name: 'Cat',
-			value: 'send random cat picture',
+			value: 'Send random cat picture',
 			
 		},
 		{
 			name: 'Eidolons',
-			value: 'send time and day state on Plain of Eidolons',
+			value: 'Send time and day state on Plain of Eidolons',
 			
 		},
-		
-		
+			
 	],
 
 	timestamp: new Date(),
