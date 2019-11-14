@@ -45,10 +45,8 @@ client.on('message', async message => {
 	} 
 	else if (message.content.startsWith(`${prefix}skip`)) {
 		music.skip(message, serverQueue);
-		
 		return;
 	} 
-	
 	else if (message.content.startsWith(`${prefix}stop`)) {
 		music.stop(message, serverQueue);
 		return;
@@ -60,7 +58,6 @@ client.on('message', async message => {
 		const { file } = await fetch('https://aws.random.cat/meow').then(response => response.json());
 		message.channel.send(file);	
 	}
-	
 	else if (message.content.startsWith(`${prefix}eidolon`)){
 		daystate(message);
 	}
@@ -85,12 +82,10 @@ client.on('message', async message => {
 		console.log(prefix);
 		return;
 	} */
-	
 	else {
 		message.channel.send('You need to enter a valid command!');
 	}
 })
-
 /*function setprefix(message){
 	
 	const args = message.content.slice(setprefix).split(' ')
@@ -104,7 +99,6 @@ client.on('message', async message => {
 
   console.log('readFileSync complete');
 }*/
-
 async function daystate(message){
 const { isDay } = await fetch('https://api.warframestat.us/pc/cetusCycle').then(response => response.json());
 		
@@ -119,8 +113,5 @@ const { isDay } = await fetch('https://api.warframestat.us/pc/cetusCycle').then(
 		}
 	}	
 }
-
-
-
 
 client.login(token);
